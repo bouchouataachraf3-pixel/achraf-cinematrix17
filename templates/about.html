@@ -1,0 +1,32 @@
+{% extends "app_base.html" %}
+{% block title %}À propos · CINEMATRIX{% endblock %}
+{% block content %}
+<header class="page-head">
+  <p class="eyebrow">Le making-of</p>
+  <h1>À propos</h1>
+</header>
+
+<section class="two-col">
+  <div>
+    <h2>Notre histoire</h2>
+    <p>CINEMATRIX est une application web construite avec Python et Flask, pensée comme un plateau de cinéma : sombre, concentrée et lumineuse là où il le faut.</p>
+    <p>Chaque écran est traité comme un plan, avec grain de pellicule, vignettage, lignes de balayage et ambiance verte fluorescente.</p>
+  </div>
+  <div class="panel">
+    <h2>Fiche technique</h2>
+    <ul class="spec">
+      <li><span>Langage</span><b>Python 3</b></li>
+      <li><span>Framework</span><b>Flask</b></li>
+      <li><span>Base de données</span><b>SQLite</b></li>
+      <li><span>Authentification</span><b>Sessions + hash scrypt</b></li>
+      <li><span>Thème</span><b>Cinématique vert &amp; noir</b></li>
+    </ul>
+  </div>
+</section>
+
+<section class="timeline">
+  <div class="tl-item"><b>Scène 1</b><p>Inscription et connexion sécurisées.</p></div>
+  <div class="tl-item"><b>Scène 2</b><p>Récupération du mot de passe par lien à durée limitée.</p></div>
+  <div class="tl-item"><b>Scène 3</b><p>Espace personnel : profil, contact, navigation.</p></div>
+</section>
+{% endblock %}

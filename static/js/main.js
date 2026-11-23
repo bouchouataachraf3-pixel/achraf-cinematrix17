@@ -1,0 +1,107 @@
+// ---------- Pluie de code façon "matrice" ----------
+(function () {
+  const canvas = document.getElementById("matrix");
+  if (!canvas || window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+    return;
+  const ctx = canvas.getContext("2d");
+  const chars = "01アイウエオカキクケコサシスセソ<>/\\{}[]#$%&*+=".split("");
+  const size = 16;
+  let cols, drops;
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    cols = Math.ceil(canvas.width / size);
+    drops = Array.from({ length: cols }, () => Math.random() * -50);
+  }
+  resize();
+  window.addEventListener("resize", resize);
+
+  function draw() {
+    ctx.fillStyle = "rgba(2, 5, 3, 0.09)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.font = size + "px 'Share Tech Mono', monospace";
+    for (let i = 0; i < cols; i++) {
+      const ch = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillStyle = Math.random() > 0.975 ? "#eafff2" : "#00ff6a";
+      ctx.fillText(ch, i * size, drops[i] * size);
+      if (drops[i] * size > canvas.height && Math.random() > 0.975)
+        drops[i] = 0;
+      drops[i] += 0.6;
+    }
+  }
+  setInterval(draw, 50);
+})();
+
+// ---------- Menu mobile ----------
+document.querySelectorAll(".nav-toggle").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const links = document.querySelector(".nav-links");
+    const open = links.classList.toggle("open");
+    btn.setAttribute("aria-expanded", open);
+  });
+});
+
+// ---------- Afficher / masquer le mot de passe ----------
+document.querySelectorAll(".toggle-pwd").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const input = btn.parentElement.querySelector("input");
+    input.type = input.type === "password" ? "text" : "password";
+  });
+});
+
+// ---------- Indicateur de robustesse ----------
+document.querySelectorAll(".strength").forEach((bar) => {
+  const input = document.getElementById(bar.dataset.for);
+  if (!input) return;
+  input.addEventListener("input", () => {
+    const v = input.value;
+    let score = 0;
+    if (v.length >= 8) score++;
+    if (/[a-z]/.test(v) && /[A-Z]/.test(v)) score++;
+    if (/\d/.test(v)) score++;
+    if (/[^A-Za-z0-9]/.test(v) || v.length >= 14) score++;
+    bar.dataset.level = v ? score : 0;
+  });
+});
+
+// ---------- Compteurs animés ----------
+document.querySelectorAll("[data-count]").forEach((el) => {
+  const target = +el.dataset.count;
+  let n = 0;
+  const step = Math.max(1, Math.round(target / 40));
+  const t = setInterval(() => {
+    n = Math.min(target, n + step);
+    el.textContent = n;
+    if (n >= target) clearInterval(t);
+  }, 30);
+});
+
+// ---------- Pastilles de masses molaires (page Calcul) ----------
+document.querySelectorAll(".chip[data-fill]").forEach((chip) => {
+  chip.addEventListener("click", () => {
+    const input = document.getElementById("molar");
+    if (input) {
+      input.value = chip.dataset.fill.replace(".", ",");
+      input.focus();
+    }
+  });
+});
+
+// ---------- Exemples cliquables (page Calcul) ----------
+document.querySelectorAll(".example[data-mass]").forEach((card) => {
+  card.addEventListener("click", () => {
+    const mass = document.querySelector("input[name=mass]");
+    const molar = document.getElementById("molar");
+    if (!mass || !molar) return;
+    mass.value = card.dataset.mass.replace(".", ",");
+    molar.value = card.dataset.molar.replace(".", ",");
+    mass.classList.remove("invalid");
+    molar.classList.remove("invalid");
+    mass.scrollIntoView({ behavior: "smooth", block: "center" });
+    document
+      .querySelectorAll(".example.picked")
+      .forEach((c) => c.classList.remove("picked"));
+    card.classList.add("picked");
+  });
+});

@@ -1,0 +1,137 @@
+{% extends "app_base.html" %} {% block title %}Profil · CINEMATRIX{% endblock %}
+{% block content %}
+<header class="page-head profile-head">
+  <div class="avatar">
+    {% if current_user.avatar %}
+    <img
+      src="{{ url_for('static', filename='uploads/avatars/' ~ current_user.avatar) }}"
+      alt="Photo de {{ current_user.username }}"
+    />
+    {% else %}{{ current_user.username[0]|upper }}{% endif %}
+  </div>
+  <div>
+    <p class="eyebrow">Membre depuis {{ current_user.created_at[:10] }}</p>
+    <h1>{{ current_user.username }}</h1>
+    <p class="muted">{{ current_user.email }}</p>
+  </div>
+</header>
+
+<section class="panel avatar-panel">
+  <h2>Photo de profil</h2>
+  <form
+    method="post"
+    enctype="multipart/form-data"
+    novalidate
+    class="avatar-form"
+  >
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}" />
+    <input type="hidden" name="action" value="avatar" />
+    <input
+      type="file"
+      name="avatar"
+      accept="image/jpeg,image/png,image/webp"
+      required
+    />
+    <button class="btn btn-sm" type="submit">Envoyer la photo</button>
+  </form>
+  {% if current_user.avatar %}
+  <form method="post" novalidate>
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}" />
+    <input type="hidden" name="action" value="avatar_remove" />
+    <button class="btn btn-ghost btn-sm" type="submit">
+      Supprimer la photo
+    </button>
+  </form>
+  {% endif %}
+  <small class="hint">JPG, PNG ou WEBP · 4 Mo maximum.</small>
+</section>
+
+<section class="two-col">
+  <div class="panel">
+    <h2>Informations</h2>
+    <form method="post" novalidate>
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}" />
+      <input type="hidden" name="action" value="info" />
+      <label class="field"
+        ><span>Nom d'utilisateur</span>
+        <input
+          type="text"
+          name="username"
+          value="{{ current_user.username }}"
+          required
+      /></label>
+      <label class="field"
+        ><span>Email</span>
+        <input
+          type="email"
+          name="email"
+          value="{{ current_user.email }}"
+          required
+      /></label>
+      <label class="field"
+        ><span>Bio</span>
+        <textarea name="bio" rows="3" maxlength="300">
+{{ current_user.bio }}</textarea
+        >
+      </label>
+      <button class="btn" type="submit">Enregistrer</button>
+    </form>
+  </div>
+
+  <div class="panel">
+    <h2>Changer le mot de passe</h2>
+    <form method="post" novalidate>
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}" />
+      <input type="hidden" name="action" value="password" />
+      <label class="field"
+        ><span>Mot de passe actuel</span>
+        <input
+          type="password"
+          name="current"
+          autocomplete="current-password"
+          required
+      /></label>
+      <label class="field"
+        ><span>Nouveau mot de passe</span>
+        <input
+          type="password"
+          name="password"
+          autocomplete="new-password"
+          required
+          minlength="8"
+      /></label>
+      <label class="field"
+        ><span>Confirmer</span>
+        <input
+          type="password"
+          name="confirm"
+          autocomplete="new-password"
+          required
+      /></label>
+      <button class="btn" type="submit">Modifier</button>
+    </form>
+  </div>
+</section>
+
+<section class="panel danger-zone">
+  <h2>Zone de danger</h2>
+  <p class="muted">La suppression de votre compte est définitive.</p>
+  <form
+    method="post"
+    novalidate
+    onsubmit="return confirm('Supprimer définitivement votre compte ?');"
+  >
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}" />
+    <input type="hidden" name="action" value="delete" />
+    <label class="field"
+      ><span>Confirmez avec votre mot de passe</span>
+      <input
+        type="password"
+        name="current"
+        autocomplete="current-password"
+        required
+    /></label>
+    <button class="btn btn-danger" type="submit">Supprimer mon compte</button>
+  </form>
+</section>
+{% endblock %}

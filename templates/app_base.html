@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block nav %}
+<header class="navbar">
+  <a class="brand" href="{{ url_for('home') }}">CINE<span>MATRIX</span></a>
+  <button class="nav-toggle" aria-label="Menu" aria-expanded="false">☰</button>
+  <nav class="nav-links">
+    <a href="{{ url_for('home') }}"    class="{{ 'active' if request.endpoint == 'home' }}">Accueil</a>
+    <a href="{{ url_for('calcul') }}"  class="{{ 'active' if request.endpoint == 'calcul' }}">Calcul</a>
+    <a href="{{ url_for('contact') }}" class="{{ 'active' if request.endpoint == 'contact' }}">Contact</a>
+    <a href="{{ url_for('about') }}"   class="{{ 'active' if request.endpoint == 'about' }}">À propos</a>
+    <a href="{{ url_for('profile') }}" class="{{ 'active' if request.endpoint == 'profile' }}">Profil</a>
+    {% if current_user.is_admin %}
+    <a href="{{ url_for('admin_messages') }}" class="{{ 'active' if request.endpoint == 'admin_messages' }}">Admin{% if unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}</a>
+    {% endif %}
+    <form action="{{ url_for('logout') }}" method="post" class="logout-form">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <button type="submit" class="btn btn-ghost btn-sm">Déconnexion</button>
+    </form>
+  </nav>
+</header>
+{% endblock %}
+{% block main_class %}page{% endblock %}

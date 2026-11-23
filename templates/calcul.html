@@ -1,0 +1,232 @@
+{% extends "app_base.html" %} {% block title %}Calcul de n · CINEMATRIX{%
+endblock %} {% block content %}
+<header class="page-head">
+  <p class="eyebrow">Laboratoire</p>
+  <h1>Calcul de n</h1>
+  <p class="lead-sm">
+    Quantité de matière : <span class="formula">n = m / M</span>
+  </p>
+</header>
+
+{% if error %}
+<div class="calc-error" role="alert">
+  <strong>ERREUR DANS LES DONNEES</strong>
+  <p>{{ error }}</p>
+</div>
+{% endif %}
+
+<section class="two-col">
+  <div class="panel">
+    <h2>Données</h2>
+    <form method="post" novalidate autocomplete="off">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}" />
+      <label class="field">
+        <span>Masse m (en g)</span>
+        <input
+          type="text"
+          name="mass"
+          inputmode="decimal"
+          placeholder="ex. 36"
+          value="{{ form.mass }}"
+          class="{{ 'invalid' if 'mass' in bad }}"
+          required
+          autofocus
+        />
+      </label>
+      <label class="field">
+        <span>Masse molaire M (en g/mol)</span>
+        <input
+          type="text"
+          name="molar"
+          id="molar"
+          inputmode="decimal"
+          placeholder="ex. 18,015"
+          value="{{ form.molar }}"
+          class="{{ 'invalid' if 'molar' in bad }}"
+          required
+        />
+      </label>
+      <div class="chips" aria-label="Masses molaires usuelles">
+        <button type="button" class="chip" data-fill="18.015">
+          H₂O · 18,015
+        </button>
+        <button type="button" class="chip" data-fill="44.01">
+          CO₂ · 44,01
+        </button>
+        <button type="button" class="chip" data-fill="58.44">
+          NaCl · 58,44
+        </button>
+        <button type="button" class="chip" data-fill="31.998">
+          O₂ · 31,998
+        </button>
+        <button type="button" class="chip" data-fill="98.079">
+          H₂SO₄ · 98,079
+        </button>
+        <button type="button" class="chip" data-fill="180.16">
+          C₆H₁₂O₆ · 180,16
+        </button>
+      </div>
+      <button class="btn" type="submit">Calculer n</button>
+    </form>
+  </div>
+
+  <div class="panel result-panel">
+    <h2>Résultat</h2>
+    {% if latest %}
+    <p class="muted">Dernier calcul</p>
+    <p class="substitution">
+      n = {{ latest.mass|num }} g ÷ {{ latest.molar_mass|num }} g/mol
+    </p>
+    <p class="result-big">{{ latest.moles|num }} <small>mol</small></p>
+    {% else %}
+    <p class="muted">
+      Entrez la masse m et la masse molaire M, puis cliquez sur « Calculer n ».
+      Le résultat apparaît ici.
+    </p>
+    <p class="result-big dim">— <small>mol</small></p>
+    {% endif %}
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Exemples prêts à l'emploi</h2>
+  <p class="muted">
+    Cliquez sur un exemple : la masse m et la masse molaire M se remplissent
+    toutes seules. Il ne reste qu'à cliquer sur « Calculer n ».
+  </p>
+  <div class="examples">
+    {% for e in examples %}
+    <button
+      type="button"
+      class="example"
+      data-mass="{{ e.mass }}"
+      data-molar="{{ e.molar }}"
+      title="Utiliser cet exemple : {{ e.name }}"
+    >
+      <span class="ex-formula">{{ e.formula }}</span>
+      <span class="ex-name">{{ e.name }}</span>
+      <span class="ex-data">M = {{ e.molar|num }} g/mol</span>
+      <span class="ex-data">m = {{ e.mass|num }} g</span>
+      <span class="ex-n">n = {{ e.n|num }} mol</span>
+    </button>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="panel formulas-panel">
+  <h2>Formules utiles</h2>
+  <div class="formulas">
+    <div>
+      <span class="f">n = m / M</span><small>quantité de matière (mol)</small>
+    </div>
+    <div><span class="f">m = n × M</span><small>masse (g)</small></div>
+    <div>
+      <span class="f">M = m / n</span><small>masse molaire (g/mol)</small>
+    </div>
+    <div>
+      <span class="f">N = n × N<sub>A</sub></span
+      ><small
+        >nombre d'entités, N<sub>A</sub> = 6,022 × 10<sup>23</sup> mol<sup
+          >−1</sup
+        ></small
+      >
+    </div>
+    <div>
+      <span class="f">C = n / V</span><small>concentration (mol/L)</small>
+    </div>
+    <div>
+      <span class="f">V = n × V<sub>m</sub></span
+      ><small
+        >volume d'un gaz, V<sub>m</sub> ≈ 24 L/mol (20 °C) ou 22,4 L/mol (0
+        °C)</small
+      >
+    </div>
+  </div>
+  <p class="worked">
+    <strong>Exemple résolu :</strong> combien de moles dans 36 g d'eau ?<br />
+    M(H₂O) = 2 × 1,008 + 15,999 = 18,015 g/mol &nbsp;→&nbsp; n = 36 / 18,015 ≈
+    <strong>1,998 mol</strong>
+  </p>
+</section>
+
+<section class="stats stats-sm">
+  <div><strong>{{ stats.total }}</strong><span>calculs</span></div>
+  <div>
+    <strong>{{ stats.avg_n|num if stats.total else '—' }}</strong
+    ><span>n moyen (mol)</span>
+  </div>
+  <div>
+    <strong>{{ stats.min_n|num if stats.total else '—' }}</strong
+    ><span>n minimum</span>
+  </div>
+  <div>
+    <strong>{{ stats.max_n|num if stats.total else '—' }}</strong
+    ><span>n maximum</span>
+  </div>
+</section>
+
+<section class="panel history">
+  <div class="history-head">
+    <h2>Historique des calculs</h2>
+    {% if history %}
+    <form
+      method="post"
+      action="{{ url_for('calcul_clear') }}"
+      onsubmit="return confirm('Vider tout l\'historique ?');"
+    >
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}" />
+      <button class="btn btn-danger btn-sm" type="submit">
+        Vider l'historique
+      </button>
+    </form>
+    {% endif %}
+  </div>
+
+  {% if history %}
+  <div class="table-wrap">
+    <table class="history-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Date</th>
+          <th>m (g)</th>
+          <th>M (g/mol)</th>
+          <th>n (mol)</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in history %}
+        <tr>
+          <td>{{ c.id }}</td>
+          <td>{{ c.created_at.replace('T', ' ') }}</td>
+          <td>{{ c.mass|num }}</td>
+          <td>{{ c.molar_mass|num }}</td>
+          <td class="n-cell">{{ c.moles|num }}</td>
+          <td>
+            <form
+              method="post"
+              action="{{ url_for('calcul_delete', calc_id=c.id) }}"
+            >
+              <input type="hidden" name="_csrf" value="{{ csrf_token() }}" />
+              <button
+                class="icon-btn"
+                type="submit"
+                title="Supprimer"
+                aria-label="Supprimer ce calcul"
+              >
+                ✕
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <small class="hint">Les 50 derniers calculs sont affichés.</small>
+  {% else %}
+  <p class="muted">Aucun calcul pour le moment.</p>
+  {% endif %}
+</section>
+{% endblock %}

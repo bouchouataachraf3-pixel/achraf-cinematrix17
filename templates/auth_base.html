@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block body_class %}auth{% endblock %}
+{% block main_class %}auth-main{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <div class="auth-logo">CINE<span>MATRIX</span></div>
+  <p class="auth-tag">{% block tagline %}{% endblock %}</p>
+  {% block auth_content %}{% endblock %}
+</section>
+{% endblock %}

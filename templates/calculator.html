@@ -1,0 +1,63 @@
+{% extends "app_base.html" %}
+{% block title %}Calcul de n · CINEMATRIX{% endblock %}
+{% block content %}
+<header class="page-head">
+  <p class="eyebrow">Calculateur de chimie</p>
+  <h1>Calcul de la quantité de matière</h1>
+  <p class="muted">Entrez des valeurs numériques pour calculer n = m / M.</p>
+</header>
+
+<section class="two-col">
+  <div class="panel">
+    <h2>Vos données</h2>
+    <form method="post" novalidate>
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <label class="field"><span>Masse m (g)</span>
+        <input type="text" inputmode="decimal" name="mass" value="{{ form.mass }}" required>
+      </label>
+      <label class="field"><span>Masse molaire M (g/mol)</span>
+        <input type="text" inputmode="decimal" name="molar_mass" value="{{ form.molar_mass }}" required>
+      </label>
+      <button class="btn" type="submit">Calculer n</button>
+    </form>
+
+    {% if result %}
+    <div class="calculation-result" role="status">
+      <p class="eyebrow">Résultat</p>
+      <h2>n = {{ "%.10g"|format(result.amount_mol) }} mol</h2>
+      <p>{{ "%.10g"|format(result.mass_g) }} g ÷ {{ "%.10g"|format(result.molar_mass_g_mol) }} g/mol</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="panel">
+    <h2>Historique des calculs</h2>
+    {% if calculations %}
+    <div class="calculation-history">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>m (g)</th>
+            <th>M (g/mol)</th>
+            <th>n (mol)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in calculations %}
+          <tr>
+            <td>{{ item.created_at[:16].replace("T", " ") }}</td>
+            <td>{{ "%.10g"|format(item.mass_g) }}</td>
+            <td>{{ "%.10g"|format(item.molar_mass_g_mol) }}</td>
+            <td>{{ "%.10g"|format(item.amount_mol) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="muted">Aucun calcul enregistré pour le moment.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

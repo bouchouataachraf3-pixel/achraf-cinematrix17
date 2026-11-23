@@ -1,0 +1,31 @@
+{% extends "auth_base.html" %}
+{% block title %}Inscription · CINEMATRIX{% endblock %}
+{% block tagline %}Créez votre compte et rejoignez la production{% endblock %}
+{% block auth_content %}
+<form method="post" novalidate>
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  <label class="field">
+    <span>Nom d'utilisateur</span>
+    <input type="text" name="username" value="{{ form.username }}" autocomplete="username" required autofocus>
+  </label>
+  <label class="field">
+    <span>Email</span>
+    <input type="email" name="email" value="{{ form.email }}" autocomplete="email" required>
+  </label>
+  <label class="field">
+    <span>Mot de passe</span>
+    <div class="pwd">
+      <input type="password" name="password" id="pwd-main" autocomplete="new-password" required minlength="8">
+      <button type="button" class="toggle-pwd" aria-label="Afficher le mot de passe">👁</button>
+    </div>
+    <div class="strength" data-for="pwd-main"><i></i><i></i><i></i><i></i></div>
+    <small class="hint">8 caractères minimum, avec lettres et chiffres.</small>
+  </label>
+  <label class="field">
+    <span>Confirmer le mot de passe</span>
+    <input type="password" name="confirm" autocomplete="new-password" required>
+  </label>
+  <button class="btn btn-block" type="submit">Créer mon compte</button>
+</form>
+<p class="auth-alt">Déjà inscrit ? <a href="{{ url_for('login') }}">Se connecter</a></p>
+{% endblock %}

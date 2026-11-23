@@ -1,0 +1,8 @@
+{% extends "auth_base.html" %}
+{% block title %}Erreur {{ error.code }} · CINEMATRIX{% endblock %}
+{% block tagline %}Coupez ! Quelque chose s'est mal passé{% endblock %}
+{% block auth_content %}
+<h1 class="err-code">{{ error.code }}</h1>
+<p class="center">{{ error.description }}</p>
+<a class="btn btn-block" href="{{ url_for('home') }}">Retour à l'accueil</a>
+{% endblock %}
